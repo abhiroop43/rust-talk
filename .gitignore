@@ -18,3 +18,5 @@ playwright/.cache/
 
 # environment files
 .env
+
+language_models/Wizard-Vicuna-7B-Uncensored.ggmlv3.q8_0.bin
