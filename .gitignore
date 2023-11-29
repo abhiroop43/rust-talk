@@ -21,3 +21,4 @@ playwright/.cache/
 
 # Language models
 *.bin
+.DS_Store
