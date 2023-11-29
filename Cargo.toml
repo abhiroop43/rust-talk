@@ -19,6 +19,7 @@ leptos_router = { version = "0.5", features = ["nightly"] }
 wasm-bindgen = "=0.2.89"
 serde = { version = "1.0.193", features = ["derive"] }
 llm = { git = "https://github.com/rustformers/llm", branch = "main", optional = true }
+rand = {version = "0.8.5", optional = true}
 
 [features]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
@@ -31,6 +32,7 @@ ssr = [
   "leptos_meta/ssr",
   "leptos_router/ssr",
   "dep:llm",
+  "dep:rand"
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode
