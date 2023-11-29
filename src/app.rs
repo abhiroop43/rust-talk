@@ -1,8 +1,13 @@
 use leptos::*;
 use leptos_meta::*;
-use leptos_router::*;
+// use leptos_router::*;
 
-use crate::model::conversation::{Conversation, Message};
+use crate::{
+    api::converse,
+    app::components::{chat_box_section::ChatBoxSection, history_section::HistorySection},
+    model::conversation::{Conversation, Message},
+};
+mod components;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -11,7 +16,7 @@ pub fn App() -> impl IntoView {
 
     let (conversation, set_conversation) = create_signal(Conversation::new());
 
-    let send = create_action(move |new_message: &String| async move {
+    let send = create_action(move |new_message: &String| {
         let user_message = Message {
             text: new_message.clone(),
             is_user: true,
@@ -19,6 +24,30 @@ pub fn App() -> impl IntoView {
         set_conversation.update(move |c| {
             c.messages.push(user_message);
         });
+        converse(conversation.get())
+    });
+
+    create_effect(move |_| {
+        if let Some(_) = send.input().get() {
+            // TODO: Disable submit button when response is loading
+
+            let model_message = Message {
+                text: "Thinking...".to_string(),
+                is_user: false,
+            };
+
+            set_conversation.update(move |c| {
+                c.messages.push(model_message);
+            });
+        }
+    });
+
+    create_effect(move |_| {
+        if let Some(Ok(response)) = send.value().clone().get() {
+            set_conversation.update(move |c| {
+                c.messages.last_mut().unwrap().text = response;
+            });
+        }
     });
 
     view! {
@@ -28,7 +57,7 @@ pub fn App() -> impl IntoView {
 
         // sets the document title
         <Title text="Rust Talk - AI Powered Chatbot built with Rust 🦀"/>
-        <HistorySection conv />
+        <HistorySection conversation />
         <ChatBoxSection send />
     }
 }
